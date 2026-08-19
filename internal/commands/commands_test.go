@@ -97,6 +97,45 @@ func TestUnknownCommandExitCode(t *testing.T) {
 	}
 }
 
+func TestHelpShowsAbstraxCommand(t *testing.T) {
+	root := commands.NewRootCmd()
+	root.SetArgs([]string{"--help"})
+	var stdout bytes.Buffer
+	root.SetOut(&stdout)
+	root.SetErr(&stdout)
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	got := stdout.String()
+	if !strings.Contains(got, "abstrax composer [command]") {
+		t.Fatalf("root help missing abstrax composer usage:\n%s", got)
+	}
+	if !strings.Contains(got, `"abstrax composer [command] --help"`) {
+		t.Fatalf("root help missing abstrax composer help hint:\n%s", got)
+	}
+	if strings.Contains(got, "abstrax-composer") {
+		t.Fatalf("root help still mentions binary name:\n%s", got)
+	}
+}
+
+func TestSubcommandHelpShowsAbstraxCommand(t *testing.T) {
+	root := commands.NewRootCmd()
+	root.SetArgs([]string{"setup", "--help"})
+	var stdout bytes.Buffer
+	root.SetOut(&stdout)
+	root.SetErr(&stdout)
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	got := stdout.String()
+	if !strings.Contains(got, "abstrax composer setup") {
+		t.Fatalf("setup help missing abstrax composer path:\n%s", got)
+	}
+	if strings.Contains(got, "abstrax-composer") {
+		t.Fatalf("setup help still mentions binary name:\n%s", got)
+	}
+}
+
 func TestJSONStreamMutuallyExclusive(t *testing.T) {
 	bin := buildBinary(t)
 	cmd := exec.Command(bin, "version", "--json", "--json-stream")

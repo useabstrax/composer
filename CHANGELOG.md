@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Action IDs** - Plugin metadata commands include `action` values such as `plugin.composer.run` and `plugin.composer.self_update` for Abstrax `--action` dispatch.
 
+### Changed
+
+- **Help and usage** - Usage text shows `abstrax composer …` instead of the `abstrax-composer` binary name.
+
 ## [0.1.0] - 2026-08-19
 
 First release of the official Abstrax Composer plugin (`abstrax-composer` → `abstrax composer …`).

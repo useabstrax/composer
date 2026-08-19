@@ -27,9 +27,12 @@ var globals GlobalFlags
 // NewRootCmd creates the root command for abstrax-composer.
 func NewRootCmd() *cobra.Command {
 	root := &cobra.Command{
-		Use:           "abstrax-composer",
-		Short:         "Install and manage Composer on an Abstrax server",
-		Long:          "Official Abstrax Composer plugin: install Composer globally, choose a PHP binary, and run Composer as the right user.",
+		Use:   plugin.PluginName,
+		Short: "Install and manage Composer on an Abstrax server",
+		Long:  "Official Abstrax Composer plugin: install Composer globally, choose a PHP binary, and run Composer as the right user.",
+		Annotations: map[string]string{
+			cobra.CommandDisplayNameAnnotation: "abstrax " + plugin.PluginName,
+		},
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
@@ -98,15 +101,11 @@ func isUsageError(err error) bool {
 
 func guessAction(root *cobra.Command) string {
 	if root == nil {
-		return "composer"
+		return plugin.PluginName
 	}
 	cmd, _, _ := root.Find(os.Args[1:])
-	if cmd == nil {
-		return "composer"
+	if cmd == nil || cmd == root {
+		return plugin.PluginName
 	}
-	parts := strings.Split(cmd.CommandPath(), " ")
-	if len(parts) >= 2 {
-		return "composer." + strings.ReplaceAll(parts[len(parts)-1], "-", "_")
-	}
-	return "composer"
+	return plugin.PluginName + "." + strings.ReplaceAll(cmd.Name(), "-", "_")
 }
