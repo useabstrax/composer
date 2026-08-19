@@ -3,6 +3,7 @@ package plugin
 import (
 	"encoding/json"
 	"io"
+	"strings"
 )
 
 const (
@@ -19,6 +20,7 @@ const (
 // MetadataCommand describes a subcommand exposed by the plugin.
 type MetadataCommand struct {
 	Name        string `json:"name"`
+	Action      string `json:"action,omitempty"`
 	Description string `json:"description"`
 }
 
@@ -45,16 +47,24 @@ func DefaultMetadata() Metadata {
 		RequiresAbstrax: RequiresAbstrax,
 		Homepage:        Homepage,
 		Commands: []MetadataCommand{
-			{Name: "setup", Description: "Download Composer, verify it, and install it globally"},
-			{Name: "self-update", Description: "Update the installed Composer phar to the latest stable version"},
-			{Name: "remove", Description: "Remove the Composer binary installed by this plugin"},
-			{Name: "status", Description: "Show Composer install state and the resolved PHP binary"},
-			{Name: "configure", Description: "Show or set the default PHP binary for Composer"},
-			{Name: "run", Description: "Run Composer with the resolved PHP binary"},
-			{Name: "diagnose", Description: "Check Composer, PHP, and common server prerequisites"},
-			{Name: "auth", Description: "Show or update Composer authentication for a user"},
-			{Name: "version", Description: "Display plugin version information"},
+			composerCommand("setup", "Download Composer, verify it, and install it globally"),
+			composerCommand("self-update", "Update the installed Composer phar to the latest stable version"),
+			composerCommand("remove", "Remove the Composer binary installed by this plugin"),
+			composerCommand("status", "Show Composer install state and the resolved PHP binary"),
+			composerCommand("configure", "Show or set the default PHP binary for Composer"),
+			composerCommand("run", "Run Composer with the resolved PHP binary"),
+			composerCommand("diagnose", "Check Composer, PHP, and common server prerequisites"),
+			composerCommand("auth", "Show or update Composer authentication for a user"),
+			composerCommand("version", "Display plugin version information"),
 		},
+	}
+}
+
+func composerCommand(name, description string) MetadataCommand {
+	return MetadataCommand{
+		Name:        name,
+		Action:      "plugin." + PluginName + "." + strings.ReplaceAll(name, "-", "_"),
+		Description: description,
 	}
 }
 

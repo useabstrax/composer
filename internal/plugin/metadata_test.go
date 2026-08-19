@@ -45,13 +45,18 @@ func TestDefaultMetadataCommands(t *testing.T) {
 		t.Fatalf("name = %q", meta.Name)
 	}
 	names := map[string]bool{}
+	actions := map[string]string{}
 	for _, c := range meta.Commands {
 		names[c.Name] = true
+		actions[c.Name] = c.Action
 	}
 	for _, want := range []string{"setup", "self-update", "remove", "status", "configure", "run", "diagnose", "auth", "version"} {
 		if !names[want] {
 			t.Fatalf("missing command %q", want)
 		}
+	}
+	if actions["self-update"] != "plugin.composer.self_update" {
+		t.Fatalf("self-update action = %q", actions["self-update"])
 	}
 }
 
